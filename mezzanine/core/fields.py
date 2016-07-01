@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from mezzanine.core.forms import OrderWidget
 from mezzanine.utils.importing import import_dotted_path
+from versatileimagefield.fields import VersatileImageField
 
 
 # Tags and attributes added to richtext filtering whitelist when the
@@ -126,6 +127,7 @@ try:
     FileBrowseField = import_dotted_path("%s.fields.FileBrowseField" %
                                          settings.PACKAGE_NAME_FILEBROWSER)
 except ImportError:
+    
     class FileField(models.FileField):
         def __init__(self, *args, **kwargs):
             for fb_arg in ("format", "extensions"):

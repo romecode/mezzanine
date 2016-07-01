@@ -65,7 +65,7 @@ def page(request, slug, template=u"pages/page.html", extra_context=None):
     type (it's model class) is checked for, and then if none of these
     templates match, the default pages/page.html is used.
     """
-
+    
     from mezzanine.pages.middleware import PageMiddleware
     if not PageMiddleware.installed():
         raise ImproperlyConfigured("mezzanine.pages.middleware.PageMiddleware "

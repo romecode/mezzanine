@@ -130,6 +130,7 @@ class BaseDynamicInlineAdmin(object):
 
     def get_fields(self, request, obj=None):
         fields = super(BaseDynamicInlineAdmin, self).get_fields(request, obj)
+        
         if issubclass(self.model, Orderable):
             fields = list(fields)
             try:
@@ -152,6 +153,7 @@ class BaseDynamicInlineAdmin(object):
                     pass
                 fieldset[1]["fields"] = fields
             fieldsets[-1][1]["fields"].append("_order")
+        
         return fieldsets
 
 
