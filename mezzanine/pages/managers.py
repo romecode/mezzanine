@@ -61,13 +61,20 @@ class PageManager(DisplayableManager):
             # eg: ['about', 'about/team', 'about/team/mike']
             parts = slug.split("/")
             slugs = ["/".join(parts[:i]) for i in range(1, len(parts) + 1)]
-
+        
         # Find the deepest page that matches one of our slugs.
         # Sorting by "-slug" should ensure that the pages are in
         # descendant -> ascendant order.
         pages_for_user = self.published(**kwargs)
+        
         pages = list(pages_for_user.filter(slug__in=slugs).order_by("-slug"))
+        
         if not pages:
+            """
+                Try to load an article since no pages are valid or found
+                
+            """
+            
             return []
 
         # Check to see if the other pages retrieved form a valid path
@@ -90,4 +97,5 @@ class PageManager(DisplayableManager):
         else:
             # Valid parents
             pages[0]._ascendants = pages[1:]
+        
         return pages

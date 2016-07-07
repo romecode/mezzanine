@@ -10,7 +10,7 @@ from django.template.response import TemplateResponse
 
 from mezzanine.pages.models import Page, PageMoveException
 from mezzanine.utils.urls import home_slug
-
+from _core.models import Article
 
 @staff_member_required
 def admin_page_ordering(request):
@@ -71,16 +71,27 @@ def page(request, slug, template=u"pages/page.html", extra_context=None):
         raise ImproperlyConfigured("mezzanine.pages.middleware.PageMiddleware "
                                    "(or a subclass of it) is missing from " +
                                    "settings.MIDDLEWARE_CLASSES")
-
+    obj=None
     if not hasattr(request, "page") or request.page.slug != slug:
-        raise Http404
+        split=slug.split('/')
+        article=split.pop(-1)
+        obj=get_object_or_404(Article,slug=article)
+        if not obj:
+            raise Http404
+        else: 
+            slug="/".join(split)+"/detail"
+            
 
     # Check for a template name matching the page's slug. If the homepage
     # is configured as a page instance, the template "pages/index.html" is
     # used, since the slug "/" won't match a template name.
     template_name = str(slug) if slug != home_slug() else "index"
     templates = [u"pages/%s.html" % template_name]
+    if obj:
+        templates.append("pages/detail.html")
+        return TemplateResponse(request, templates, {'article':obj})
     method_template = request.page.get_content_model().get_template_name()
+    
     if method_template:
         templates.insert(0, method_template)
     if request.page.content_model is not None:

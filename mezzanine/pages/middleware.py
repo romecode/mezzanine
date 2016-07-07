@@ -68,6 +68,7 @@ class PageMiddleware(object):
         # Load the closest matching page by slug, and assign it to the
         # request object. If none found, skip all further processing.
         slug = path_to_slug(request.path_info)
+        
         pages = Page.objects.with_ascendants_for_slug(slug,
                         for_user=request.user, include_login_required=True)
         if pages:
