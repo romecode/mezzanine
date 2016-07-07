@@ -89,6 +89,7 @@ def page(request, slug, template=u"pages/page.html", extra_context=None):
     templates = [u"pages/%s.html" % template_name]
     if obj:
         templates.append("pages/detail.html")
+        obj.prepare_content(request)
         return TemplateResponse(request, templates, {'article':obj})
     method_template = request.page.get_content_model().get_template_name()
     
