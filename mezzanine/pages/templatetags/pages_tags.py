@@ -179,6 +179,7 @@ def set_page_permissions(context, token):
     """
     page = context[token.split_contents()[1]]
     model = page.get_content_model()
+    
     try:
         opts = model._meta
     except AttributeError:

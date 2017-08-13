@@ -247,6 +247,7 @@ class Displayable(Slugged, MetaData, TimeStamped):
         the field as it will be blank when a blog post is created from
         the quick blog form in the admin dashboard.
         """
+        
         if self.publish_date is None:
             self.publish_date = now()
         super(Displayable, self).save(*args, **kwargs)

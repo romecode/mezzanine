@@ -34,7 +34,7 @@ except ProfileNotConfigured:
 
 if settings.ACCOUNTS_NO_USERNAME:
     _exclude_fields += ("username",)
-    username_label = _("Email address")
+    username_label = _("Email address or Username")
 else:
     username_label = _("Username or email address")
 
@@ -90,32 +90,19 @@ class ProfileForm(Html5Mixin, forms.ModelForm):
         super(ProfileForm, self).__init__(*args, **kwargs)
         self._signup = self.instance.id is None
         user_fields = set([f.name for f in User._meta.get_fields()])
+        _exclude=['address1','address2','city','state','zip_code','phone']
         try:
             self.fields["username"].help_text = ugettext(
                         "Only letters, numbers, dashes or underscores please")
         except KeyError:
             pass
-        for field in self.fields:
-            # Make user fields required.
-            if field in user_fields:
-                self.fields[field].required = True
-            # Disable auto-complete for password fields.
-            # Password isn't required for profile update.
-            if field.startswith("password"):
-                self.fields[field].widget.attrs["autocomplete"] = "off"
-                self.fields[field].widget.attrs.pop("required", "")
-                if not self._signup:
-                    self.fields[field].required = False
-                    if field == "password1":
-                        self.fields[field].help_text = ugettext(
-                                               "Leave blank unless you want "
-                                               "to change your password")
-
         # Add any profile fields to the form.
         try:
             profile_fields_form = self.get_profile_fields_form()
             profile_fields = profile_fields_form().fields
+            
             self.fields.update(profile_fields)
+            
             if not self._signup:
                 user_profile = get_profile_for_user(self.instance)
                 for field in profile_fields:
@@ -126,6 +113,35 @@ class ProfileForm(Html5Mixin, forms.ModelForm):
                     self.initial[field] = value
         except ProfileNotConfigured:
             pass
+        for field in self.fields:
+            # Make user fields required.
+            
+            self.fields[field].required = True
+            self.fields[field].widget.attrs['required'] = True
+            # Disable auto-complete for password fields.
+            # Password isn't required for profile update.
+            if field.startswith("password"):
+                self.fields[field].widget.attrs["autocomplete"] = "off"
+                #self.fields[field].widget.attrs.pop("required", "")
+                if field == "password1":
+                    self.fields[field].widget.attrs["data-minlength"] = "6"
+                    self.fields[field].widget.attrs["data-minlength-error"] = "Must be at least 6 characters"
+                if field == 'password2':
+                    self.fields[field].widget.attrs["data-match"] = "#id_password1"
+                    self.fields[field].widget.attrs["data-match-error"] = "Whoops, these don't match"
+                if not self._signup:
+                    
+                    self.fields[field].required = False
+                    if field == "password1":
+                        self.fields[field].help_text = ugettext(
+                                               "Leave blank unless you want "
+                                               "to change your password")
+            if self._signup:
+                if field in _exclude:
+                    try:
+                        del self.fields[field]
+                    except:
+                        pass
 
     def clean_username(self):
         """

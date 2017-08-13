@@ -176,6 +176,7 @@ class KeywordsField(BaseGenericRelation):
         Provide the custom form widget for the admin, since there
         isn't a form field mapped to ``GenericRelation`` model fields.
         """
+        
         from mezzanine.generic.forms import KeywordsWidget
         kwargs["widget"] = KeywordsWidget
         return super(KeywordsField, self).formfield(**kwargs)
@@ -188,6 +189,7 @@ class KeywordsField(BaseGenericRelation):
         ``Keyword`` instances if their last related ``AssignedKeyword``
         instance is being removed.
         """
+        
         from mezzanine.generic.models import Keyword
         related_manager = getattr(instance, self.name)
         # Get a list of Keyword IDs being removed.
@@ -229,13 +231,18 @@ class KeywordsField(BaseGenericRelation):
         """
         Stores the keywords as a single string for searching.
         """
+        print 'related_items_changed'
         assigned = related_manager.select_related("keyword")
+        
         keywords = " ".join([str(a.keyword) for a in assigned])
+        
         string_field_name = list(self.fields.keys())[0] % \
                             self.related_field_name
+        
         if getattr(instance, string_field_name) != keywords:
             setattr(instance, string_field_name, keywords)
             instance.save()
+            
 
 
 class RatingField(BaseGenericRelation):

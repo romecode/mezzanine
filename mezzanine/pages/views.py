@@ -73,12 +73,12 @@ def page(request, slug, template=u"pages/page.html", extra_context=None):
                                    "settings.MIDDLEWARE_CLASSES")
     obj=None
     if not hasattr(request, "page") or request.page.slug != slug:
+        
         split=slug.split('/')
         article=split.pop(-1)
+        
         obj=get_object_or_404(Article,slug=article)
-        if not obj:
-            raise Http404
-        else: 
+        if obj:
             slug="/".join(split)+"/detail"
             
 
