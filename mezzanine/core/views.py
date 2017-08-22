@@ -36,6 +36,8 @@ from mezzanine.utils.views import is_editable, paginate, set_cookie
 from mezzanine.utils.sites import has_site_permission
 from mezzanine.utils.urls import next_url
 
+from django.views.debug import technical_500_response
+import sys
 
 mimetypes.init()
 
@@ -227,6 +229,8 @@ def server_error(request, template_name="errors/500.html"):
     Mimics Django's error handler but adds ``STATIC_URL`` to the
     context.
     """
+    if request.user.is_superuser or request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS:
+        return technical_500_response(request, *sys.exc_info())
     context = RequestContext(request, {"STATIC_URL": settings.STATIC_URL})
     t = get_template(template_name)
     return HttpResponseServerError(t.render(context))
