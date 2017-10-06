@@ -5,12 +5,14 @@
 
 {% block extrahead %}
 <link rel="stylesheet" href="{% static "mezzanine/css/admin/global.css" %}">
+
 <style>
     /* These are set in PageAdmin's view methods, and mezzanine.utils.admin.SingletonAdmin */
     {% if hide_delete_link or singleton %}.submit-row .deletelink {display:none !important;}{% endif %}
     {% if hide_slug_field %}.slug {display:none !important;}{% endif %}
     {% if singleton %}.change-view-save-another {display:none !important;}{% endif %}
 </style>
+
 <script>
     {% url "static_proxy" as static_proxy_url %}
     {% url "fb_browse" as fb_browse_url %}
@@ -29,10 +31,11 @@
     window.__grappelli_installed = {{ settings.GRAPPELLI_INSTALLED|lower }};
     window.__admin_menu_collapsed = {{ settings.ADMIN_MENU_COLLAPSED|lower }};
     window.__language_code = '{{ LANGUAGE_CODE }}';
+    
 </script>
 
-{% if not settings.GRAPPELLI_INSTALLED %}
-<script src="{% static "mezzanine/js/"|add:settings.JQUERY_FILENAME %}"></script>
+{% if not settings.GRAPPELLI_INSTALLED and 0 %}
+<script srcw="{% static "mezzanine/js/"|add:settings.JQUERY_FILENAME %}"></script>
 {% endif %}
 
 <script>
@@ -53,11 +56,55 @@ jQuery(function($) {
 
 {% block before_content %}
 {% if user.is_staff and not is_popup and not request.GET.pop %}
+
 {% admin_dropdown_menu %}
 {% endif %}
 {% endblock %}
 
 {% block footer %}
+
+
+
+<script>
+
+CKEDITOR.on( 'dialogDefinition', function( event ) {
+    var dialogName      = event.data.name,
+        dialogDefinition = event.data.definition,
+        infoTab,
+        browse;
+
+    // Check if the definition is from the dialog window you are interested in (the "Image" dialog window).
+    if ( dialogName == 'image' ) {
+        // Get a reference to the "Image Info" tab.
+        infoTab = dialogDefinition.getContents( 'info' );
+
+        // Get the "Browse" button
+        browse = infoTab.get( 'browse' );
+
+        // Override the "onClick" function
+        browse.onClick = function () {
+            var  me      = this,
+                dialog   = me.getDialog(),
+                editor   = dialog.getParentEditor(),
+                callBack = editor._.filebrowserFn,
+                win;
+
+            // This may or may not be needed.  Got it from ckeditor docs. 
+            editor._.filebrowserSe = me;
+			var cb = function(url){
+				window.CKEDITOR.tools.callFunction( callBack , url);
+			}
+            // do stuff here that happens when the button gets clicked
+			browseMediaLibrary(cb)
+            // Call back to CKEDITOR with new path to image (i.e. replace path below with new url for image)
+            
+
+        }
+
+    }
+
+});
+</script>
 {% if form.this_is_the_login_form %}
     <script src="{% static "mezzanine/js/admin/login.js" %}"></script>
 {% else %}
