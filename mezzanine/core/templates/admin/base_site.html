@@ -66,7 +66,7 @@ jQuery(function($) {
 
 
 <script>
-
+if(CKEDITOR){
 CKEDITOR.on( 'dialogDefinition', function( event ) {
     var dialogName      = event.data.name,
         dialogDefinition = event.data.definition,
@@ -104,6 +104,7 @@ CKEDITOR.on( 'dialogDefinition', function( event ) {
     }
 
 });
+}
 </script>
 {% if form.this_is_the_login_form %}
     <script src="{% static "mezzanine/js/admin/login.js" %}"></script>
