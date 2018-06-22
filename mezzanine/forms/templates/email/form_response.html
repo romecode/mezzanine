@@ -1,7 +1,7 @@
 {% extends "email/base.html" %}
 
 {% block main %}
-{% if message %}<p>{{ message|safe }}</p>{% endif %}
+{% if message %}{{ message|safe }}{% endif %}
 <table border="0">
 {% for field, value in fields %}
 <tr>
