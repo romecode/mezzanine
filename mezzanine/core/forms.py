@@ -51,6 +51,21 @@ class TinyMceWidget(forms.Textarea):
     def __init__(self, *args, **kwargs):
         super(TinyMceWidget, self).__init__(*args, **kwargs)
         self.attrs["class"] = "mceEditor"
+        
+class NewWidget(forms.Textarea):
+    """
+    Setup the JS files and targetting CSS class for a textarea to
+    use TinyMCE.
+    """
+
+    #class Media:
+        #js = (
+        #   static(settings.CKEDITOR_SETUP_JS),)
+        #css = {'all': (static("mezzanine/tinymce/tinymce.css"),)}
+
+    def __init__(self, *args, **kwargs):
+        super(NewWidget, self).__init__(*args, **kwargs)
+        self.attrs["class"] = "ckEditor"
 
 
 class OrderWidget(forms.HiddenInput):
